@@ -103,10 +103,6 @@ class Profiles:
                     "subsampling_cond"
                 )
 
-                logger.info(
-                    f"Start subsampling UUIDs for profile {profile_name} with "
-                    f"condition {subsampling_cond}"
-                )
                 # make SQL string for subsampling condition
                 # e.g. AND properties->>'assay_term_name'='ChIP-seq'
 
@@ -121,10 +117,15 @@ class Profiles:
                 else:
                     cond_sql = ""
 
+                query = f"SELECT rid FROM object WHERE item_type='{profile_name}' {cond_sql}"
+
+                logger.info(
+                    f"Subsampling for profile {profile_name} with "
+                    f"cond {subsampling_cond}, Query: {query}"
+                )
+
                 uuids = []
-                for uuid, in self.database.send_query(
-                    f"SELECT rid FROM object WHERE item_type='{profile_name}' {cond_sql}"
-                ):
+                for uuid, in self.database.send_query(query):
                     uuids.append(uuid)
 
                 if not uuids:

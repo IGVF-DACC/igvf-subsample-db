@@ -38,7 +38,7 @@ def main():
     args = parser.parse_args()
 
     if args.debug:
-        logging.basicConfig(level=logging.DEBUG)
+        logging.getLogger().setLevel(logging.DEBUG)
 
     with open(args.rule_file) as fp:
         rule = json.load(fp)
