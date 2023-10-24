@@ -26,11 +26,19 @@ def main():
     )
     parser.add_argument(
         "-d", "--database",
-        help="encoded for ENCODE, igvfd for IGVF",
+        help="Use encoded for ENCODE, igvfd for IGVF.",
         choices=["encoded", "igvfd"]
+    )
+    parser.add_argument(
+        '--debug',
+        action='store_true',
+        help='Print debug messages to stderr.'
     )
 
     args = parser.parse_args()
+
+    if args.debug:
+        logging.basicConfig(level=logging.DEBUG)
 
     with open(args.rule_file) as fp:
         rule = json.load(fp)

@@ -113,6 +113,8 @@ class Profiles:
                 if subsampling_cond:
                     cond_list = [""]
                     for prop, val in subsampling_cond.items():
+                        # escape single quote for SQL WHERE clause
+                        val = val.replace("'", "''")
                         cond_list.append("properties->>'{prop}'='{val}'")
 
                     cond_sql = " AND ".join(cond_list)
@@ -123,7 +125,13 @@ class Profiles:
                 for uuid, in self.database.send_query(
                     f"SELECT rid FROM object WHERE item_type='{profile_name}' {cond_sql}"
                 ):
-                    uuids.add(uuid)
+                    uuids.append(uuid)
+
+                if not uuids:
+                    logger.warning(
+                        f"Found 0 objects matching condition: {subsampling_cond}"
+                    )
+                    continue
 
                 num_subsampled = max(
                     math.floor(subsampling_rate * len(uuids)),
@@ -131,7 +139,7 @@ class Profiles:
                 )
                 if num_subsampled:
                     subsampled = set(random.choices(uuids, k=num_subsampled))
-                    logger.info(f"\t{subsampled}")
+                    logger.debug(f"\t{subsampled}")
                     subsampled_uuids.update(subsampled)
 
         return subsampled_uuids
@@ -145,11 +153,11 @@ class Profiles:
             return
 
         if uuid in parent_uuids:
-            logger.info(f"Cyclic ref found. {depth}: {uuid}, {self.uuid_to_profile[uuid]}")
+            logger.debug(f"Cyclic ref found. {depth}: {uuid}, {self.uuid_to_profile[uuid]}")
             return
 
         if depth > 300:
-            logger.info(f"Search tree is too deep. {depth}: {uuid}, {self.uuid_to_profile[uuid]}")
+            logger.debug(f"Search tree is too deep. {depth}: {uuid}, {self.uuid_to_profile[uuid]}")
 
         self._uuids.add(uuid)
 
