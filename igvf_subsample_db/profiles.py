@@ -26,7 +26,7 @@ class Profiles:
 
         logger.info("Loading links from DB...")
         self.links = defaultdict(set)
-        for source_uuid, rel, target_uuid in self.database.send_query(
+        for source_uuid, rel, target_uuid in self.database.fetchall(
             "SELECT * FROM links"
         ):
             self.links[source_uuid].add(target_uuid)
@@ -34,7 +34,7 @@ class Profiles:
         logger.info("Loading resources from DB...")
         # self.resources = defaultdict(set)
         self.uuid_to_profile = {}
-        for uuid, profile_name in self.database.send_query(
+        for uuid, profile_name in self.database.fetchall(
             "SELECT * FROM resources"
         ):
             # self.resources[profile_name].add(uuid)
@@ -43,7 +43,7 @@ class Profiles:
         logger.info("Loading distinct profiles from DB...")
         self.profile_names = set()
 
-        for profile_name, in self.database.send_query(
+        for profile_name, in self.database.fetchall(
             "SELECT DISTINCT(item_type) FROM resources"
         ):
             self.profile_names.add(profile_name)
@@ -125,7 +125,7 @@ class Profiles:
                 )
 
                 uuids = []
-                for uuid, in self.database.send_query(query):
+                for uuid, in self.database.fetchall(query):
                     uuids.append(uuid)
 
                 if not uuids:
@@ -168,5 +168,5 @@ class Profiles:
         if len(self._uuids) % UUIDS_PER_LOG == 0:
             logger.info(f"Number of UUIDs = {len(self._uuids)} so far.")
 
-        for linked_uuid in self.links(uuid):
+        for linked_uuid in self.links[uuid]:
             self.add_uuid(linked_uuid, depth=depth, parent_uuids=parent_uuids)

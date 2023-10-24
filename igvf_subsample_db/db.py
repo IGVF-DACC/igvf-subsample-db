@@ -3,19 +3,25 @@ import psycopg2
 
 class Database:
     def __init__(self, database, user="postgres", password="postgres", host="127.0.0.1", port=5432):
-        self.connection = psycopg2.connect(
+        self.conn = psycopg2.connect(
             user=user,
             password=password,
             host=host,
             port=port,
             database=database,
         )
-        self.cursor = self.connection.cursor()
 
-    def send_query(self, query):
-        self.cursor.execute(query)
-        return self.cursor.fetchall()
+    def __del__(self):
+        self.conn.close()
 
+    def fetchall(self, query):
+        cursor = self.conn.cursor()
+        cursor.execute(query)
+        return cursor.fetchall()
+
+    def commit(self, query):
+        self.conn.cursor().execute(query)
+        self.conn.commit()
 
 class SubsampleDatabase:
     def __init__(self, database):
