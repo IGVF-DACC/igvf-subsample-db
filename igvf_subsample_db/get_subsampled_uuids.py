@@ -22,12 +22,14 @@ def main():
     )
     parser.add_argument(
         "-o", "--output-prefix",
-        help="File path prefix for output CSV."
+        help="File path prefix for output CSV.",
+        required=True
     )
     parser.add_argument(
         "-d", "--database",
         help="Use encoded for ENCODE, igvfd for IGVF.",
-        choices=["encoded", "igvfd"]
+        required=True,
+        choices=["encoded", "igvfd"],
     )
     parser.add_argument(
         '--debug',
