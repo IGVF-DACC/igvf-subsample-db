@@ -24,13 +24,18 @@ def main():
         "-o", "--output-prefix",
         help="File path prefix for output CSV."
     )
+    parser.add_argument(
+        "-d", "--database",
+        help="encoded for ENCODE, igvfd for IGVF",
+        choices=["encoded", "igvfd"]
+    )
 
     args = parser.parse_args()
 
     with open(args.rule_file) as fp:
         rule = json.load(fp)
 
-    database = Database()
+    database = Database("encoded")
     profiles = Profiles(database)
 
     # subsample UUIDs with rule for each profile

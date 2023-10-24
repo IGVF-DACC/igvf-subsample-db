@@ -32,12 +32,12 @@ class Profiles:
             self.links[source_uuid].add(target_uuid)
 
         logger.info("Loading resources from DB...")
-        self.resources = defaultdict(set)
+        # self.resources = defaultdict(set)
         self.uuid_to_profile = {}
         for uuid, profile_name in self.database.send_query(
-            "SELECT * FROM links"
+            "SELECT * FROM resources"
         ):
-            self.resources[profile_name].add(uuid)
+            # self.resources[profile_name].add(uuid)
             self.uuid_to_profile[uuid] = profile_name
 
         logger.info("Loading distinct profiles from DB...")
@@ -83,56 +83,56 @@ class Profiles:
         subsampled_uuids = set()
 
         for profile_name in self.profile_names:
-            # reset random seed for each profile
-            random.seed(SUBSAMPLING_RANDOM_SEED)
-
             if profile_name not in rule:
                 logger.warning(
                     f"Could not find subsampling rule for profile {profile_name}."
                 )
                 continue
 
-            subsampling_rate = rule[profile_name].get(
-                "subsampling_rate", 0.0
-            )
-            subsampling_min = rule[profile_name].get(
-                "subsampling_min", 1
-            )
-            subsampling_cond = rule[profile_name].get(
-                "subsampling_cond"
-            )
+            for rule_elem in rule[profile_name]:
+                # reset random seed for each rule element
+                random.seed(SUBSAMPLING_RANDOM_SEED)
 
-            logger.info(
-                f"Start subsampling UUIDs for profile {profile_name} with "
-                f"condition {subsampling_cond}"
-            )
+                subsampling_rate = rule_elem.get(
+                    "subsampling_rate", 0.0
+                )
+                subsampling_min = rule_elem.get(
+                    "subsampling_min", 1
+                )
+                subsampling_cond = rule_elem.get(
+                    "subsampling_cond"
+                )
 
-            # make SQL string for subsampling condition
-            # e.g. AND properties->>'assay_term_name'='ChIP-seq'
+                logger.info(
+                    f"Start subsampling UUIDs for profile {profile_name} with "
+                    f"condition {subsampling_cond}"
+                )
+                # make SQL string for subsampling condition
+                # e.g. AND properties->>'assay_term_name'='ChIP-seq'
 
-            if subsampling_cond:
-                cond_list = [""]
-                for prop, val in subsampling_cond.items():
-                    cond_list.append("properties->>'{prop}'='{val}'")
+                if subsampling_cond:
+                    cond_list = [""]
+                    for prop, val in subsampling_cond.items():
+                        cond_list.append("properties->>'{prop}'='{val}'")
 
-                cond_sql = " AND ".join(cond_list)
-            else:
-                cond_sql = ""
+                    cond_sql = " AND ".join(cond_list)
+                else:
+                    cond_sql = ""
 
-            uuids = []
-            for uuid, in self.database.send_query(
-                f"SELECT rid FROM object WHERE item_type='{profile_name}' {cond_sql}"
-            ):
-                uuids.add(uuid)
+                uuids = []
+                for uuid, in self.database.send_query(
+                    f"SELECT rid FROM object WHERE item_type='{profile_name}' {cond_sql}"
+                ):
+                    uuids.add(uuid)
 
-            num_subsampled = max(
-                math.floor(subsampling_rate * len(uuids)),
-                subsampling_min
-            )
-            if num_subsampled:
-                subsampled = set(random.choices(uuids, k=num_subsampled))
-                logger.info(f"\t{subsampled}")
-                subsampled_uuids.update(subsampled)
+                num_subsampled = max(
+                    math.floor(subsampling_rate * len(uuids)),
+                    subsampling_min
+                )
+                if num_subsampled:
+                    subsampled = set(random.choices(uuids, k=num_subsampled))
+                    logger.info(f"\t{subsampled}")
+                    subsampled_uuids.update(subsampled)
 
         return subsampled_uuids
 
