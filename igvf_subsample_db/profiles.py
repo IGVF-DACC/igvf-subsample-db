@@ -179,5 +179,5 @@ class Profiles:
                 linked_uuid, depth=depth, parent_uuids=parent_uuids
             )
 
-    def get_linked_uuids():
+    def get_linked_uuids(self):
         return self._linked_uuids
