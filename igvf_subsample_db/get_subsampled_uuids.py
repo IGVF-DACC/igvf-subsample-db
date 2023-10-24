@@ -56,11 +56,12 @@ def main():
         fp.write("\n".join(subsampled_uuids))
 
     # find all linked UUIDs
-    all_linked_uuids = profiles.add_uuids(subsampled_uuids)
+    profiles.add_uuids(subsampled_uuids)
+    linked_uuids = profiles.get_linked_uuids()
 
     with open(args.output_prefix + ".subsampled.linked.csv", "w") as fp:
         fp.write("rid\n")
-        fp.write("\n".join(all_linked_uuids))
+        fp.write("\n".join(linked_uuids))
 
 
 if __name__ == "__main__":

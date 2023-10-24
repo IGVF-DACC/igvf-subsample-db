@@ -23,6 +23,7 @@ class Database:
         self.conn.cursor().execute(query)
         self.conn.commit()
 
+
 class SubsampleDatabase:
     def __init__(self, database):
         """

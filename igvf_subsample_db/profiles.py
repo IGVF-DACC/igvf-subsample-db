@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 
 SUBSAMPLING_RANDOM_SEED = 17
-UUIDS_PER_LOG = 500
+UUIDS_PER_LOG = 10000
 
 
 class Profiles:
@@ -48,7 +48,7 @@ class Profiles:
         ):
             self.profile_names.add(profile_name)
 
-        self._uuids = set()
+        self._linked_uuids = set()
 
     def subsample(self, rule):
         """
@@ -150,23 +150,34 @@ class Profiles:
             self.add_uuid(uuid)
 
     def add_uuid(self, uuid, depth=0, parent_uuids=()):
-        if uuid in self._uuids:
+        if uuid in self._linked_uuids:
             return
 
         if uuid in parent_uuids:
-            logger.debug(f"Cyclic ref found. {depth}: {uuid}, {self.uuid_to_profile[uuid]}")
+            logger.debug(
+                f"Cyclic ref found. {depth}: {uuid}, {self.uuid_to_profile[uuid]}"
+            )
             return
 
         if depth > 300:
-            logger.debug(f"Search tree is too deep. {depth}: {uuid}, {self.uuid_to_profile[uuid]}")
+            logger.debug(
+                f"Search tree is too deep. {depth}: {uuid}, {self.uuid_to_profile[uuid]}"
+            )
 
-        self._uuids.add(uuid)
+        self._linked_uuids.add(uuid)
 
         parent_uuids += (uuid,)
         depth += 1
 
-        if len(self._uuids) % UUIDS_PER_LOG == 0:
-            logger.info(f"Number of UUIDs = {len(self._uuids)} so far.")
+        if len(self._linked_uuids) % UUIDS_PER_LOG == 0:
+            logger.info(
+                f"Number of all linked UUIDs = {len(self._linked_uuids)} so far."
+            )
 
         for linked_uuid in self.links[uuid]:
-            self.add_uuid(linked_uuid, depth=depth, parent_uuids=parent_uuids)
+            self.add_uuid(
+                linked_uuid, depth=depth, parent_uuids=parent_uuids
+            )
+
+    def get_linked_uuids():
+        return self._linked_uuids
