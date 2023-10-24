@@ -111,7 +111,7 @@ class Profiles:
                     for prop, val in subsampling_cond.items():
                         # escape single quote for SQL WHERE clause
                         val = val.replace("'", "''")
-                        cond_list.append("properties->>'{prop}'='{val}'")
+                        cond_list.append(f"properties->>'{prop}'='{val}'")
 
                     cond_sql = " AND ".join(cond_list)
                 else:
