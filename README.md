@@ -1,7 +1,6 @@
 # IGVF Subsample DB
 
-This tool subsamples Postgres database of ENCODE/IGVF servers based on a subsampling rule JSON file. 
-It directly modifies the Postgres database of a demo instance. So you need to spin up a new demo instance and stop the web server first.
+This tool subsamples Postgres database of ENCODE/IGVF servers based on a subsampling rule JSON file. It will generate a list subsampled UUIDs and find all linked UUIDs recursively. And then it will remove all other UUIDs from the database.
 
 
 ## Subsampling rule JSON
@@ -45,33 +44,35 @@ A rule is consist of `subsampling_min`, `subsampling_rate` and `subsampling_cond
 }
 ```
 
-* `subsampling_min` defines the minimum number of objects in the profile.
+* `subsampling_min` defines the minimum number of objects in the profile after subsampling.
 * `subsampling_rate` defines the minimum number of objects as total number of objects in the profile multiplied by the rate. MAX of these two values will be taken as the final number of subsampled objects in the profile.
 * `subsampling_cond` is a JSON object that defines conditions for the rule. For the above example, this will only subsample objects with a property `assay_term_name` defined as `ChIP-seq`. You can use any valid property in a profile. See profile's schema JSON to find such property.
 
-There are currently `12548` `ChIP-seq` experiments and it subsample `12548` objects down to `MAX(5, 1e-05*12548)=5`.
+There are currently `12548` `ChIP-seq` experiments and it will subsample `12548` objects down to `MAX(5, 1e-05*12548)=5`.
 
 For the case of `file` profile in the above example, there are currently `1458539` `file` objects on ENCODE. So it will subsample `1458539` objects down to `MAX(100, 1e-03 * 1458539) = 1458`.
 
 You can have multiple rules under a single profile. See the case of `experiment` profile in the above example. It will include at least 3 `ATAC-Seq` experiments and 5 `ChIP-seq` experiments.
 
 
-## Deploying a new demo instance (ENCODE)
+## Deploying a new demo instance
 
-See https://github.com/ENCODE-DCC/encoded#deploying-an-aws-demo to deploy a new demo instance for ENCODE.
+Since the tool directly modifies the PG database on a demo instance, you need to spin up a new demo instance first.
 
-
-## Deploying a new demo instance (IGVF)
-
-See https://github.com/IGVF-DACC/igvfd/blob/dev/cdk/README.md to deploy a new demo instance for IGVF.
+See https://github.com/ENCODE-DCC/encoded#deploying-an-aws-demo for ENCODE and https://github.com/IGVF-DACC/igvfd/blob/dev/cdk/README.md for IGVF.
 
 
 ## Running the subsampler
 
-SSH to the instance and stop the web server.
+SSH to a demo instance, login as `root` and stop a web server.
 ```bash
-# login as root
 $ service apache2 stop
+```
+
+Login as `postgres` and install the tool.
+```bash
+$ sudo su postgres
+$ pip install igvf_subsample_db
 ```
 
 Edit `/etc/postgresql/11/main/pg_hba.conf` (md5 -> trust) to allow local connection from the tool.
@@ -81,27 +82,16 @@ Edit `/etc/postgresql/11/main/pg_hba.conf` (md5 -> trust) to allow local connect
 host    all             all             127.0.0.1/32            trust
 ```
 
-Login as `postgres` user and install the tool.
+(Optional) Create a template rule JSON. You can find more [examples](/examples) on this repo.
 ```bash
-$ sudo su postgres
-$ pip install igvf_subsample_db
+$ PLATFORM=encode # or igvf
+
+$ igvf_subsample_db create_rule_template -o example_subsampling_rule.json -p $PLATFORM
 ```
 
-Define your platform (ENCODE or IGVF). Run the UUID subsampler or get the template rule JSON first.
+Edit the template rule JSON file or use your own. Run the tool to get a CSV file with subsampled UUIDs.
 ```bash
-$ PLATFORM=ENCODE # or IGVF
-
-# login as postgres
-$ sudo su postgres
-
-# get a template rule JSON first
-# this teamplate will include all profiles defined in the database
-$ igvf_subsample_db -p $PLATFORM create_rule_template example_subsampling_rule.json
-```
-
-Edit the template rule JSON file or use your own. Run the tool to get a CSV (with header `rid`) file with subsampled UUIDs.
-```bash
-$ igvf_subsample_db -p $PLATFORM get_subsampled_uuids [RULE_JSON_FILE] -o subsampled.csv --debug
+$ igvf_subsample_db get_subsampled_uuids [RULE_JSON_FILE] -o subsampled.csv -p $PLATFORM --debug
 ```
 
 Make a backup of the database.
@@ -115,9 +105,9 @@ $ psql
 > CREATE DATABASE igvfd_backup WITH TEMPLATE igvfd;
 ```
 
-Take the CSV file and feed it to the subsampler, this will directly modify the current pg database.
+Take the CSV file and feed it to the subsampler, this will directly modify the current PG database.
 ```bash
-$ igvf_subsample_db -p $PLATFORM subsample_pg [SUBSAMPLED_CSV_FILE] --debug
+$ igvf_subsample_db subsample_pg [SUBSAMPLED_CSV_FILE] -p $PLATFORM --debug
 ```
 
 Login as `encoded` (ENCODE) or `igvfd` (IGVF). Reindex ElasticSearch.
@@ -143,9 +133,9 @@ $ create-mapping production.ini --app-name app
 $ curl -X GET localhost:9201/_cat/indices
 ```
 
-Wait for 30m and login as `root` and then start the web server back on.
+Wait for 30m and login as `root` and then start the web server.
 ```bash
 $ service apache2 start
 ```
 
-Visit the demo site and login as an admin. Run reindexer via URL. Open URL `YOUR_DEMO_ENDPOINT/_indexer_state?reindex=all`.
+Visit the demo site and login as an admin account. Run the reindexer via URL. Open URL `YOUR_DEMO_ENDPOINT/_indexer_state?reindex=all`.
