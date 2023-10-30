@@ -41,10 +41,10 @@ def main():
     database = Database(args.database)
     profiles = Profiles(database)
 
-    rule_template = profiles.create_rule_template()
+    template_rule = profiles.create_template_rule()
 
     with open(args.output, "w") as fp:
-        fp.write(json.dumps(rule_template, indent=4))
+        fp.write(json.dumps(template_rule, indent=4))
 
 
 if __name__ == "__main__":
