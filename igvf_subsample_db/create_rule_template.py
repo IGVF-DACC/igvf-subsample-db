@@ -25,7 +25,7 @@ def main():
         "-d", "--database",
         help="Use encoded for ENCODE, igvfd for IGVF.",
         required=True,
-        choices=["encoded", "igvfd"],
+        choices=["encoded", "igvfd", "test_encoded", "test_igvfd"],
     )
     parser.add_argument(
         '--debug',
