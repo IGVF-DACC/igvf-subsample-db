@@ -14,15 +14,15 @@ def main():
     logging.basicConfig(level=logging.INFO)
 
     parser = argparse.ArgumentParser(
-        description="IGVF/ENCODE UUID Subsampler."
+        description="Subsamples UUIDs from IGVF/ENCODE PG Database."
     )
     parser.add_argument(
         "rule_file",
         help="Subsampling rule JSON file."
     )
     parser.add_argument(
-        "-o", "--output-prefix",
-        help="File path prefix for output CSV.",
+        "-o", "--output",
+        help="File path for output CSV.",
         required=True
     )
     parser.add_argument(
@@ -45,21 +45,17 @@ def main():
     with open(args.rule_file) as fp:
         rule = json.load(fp)
 
-    database = Database("encoded")
+    database = Database(args.database)
     profiles = Profiles(database)
 
     # subsample UUIDs with rule for each profile
     subsampled_uuids = profiles.subsample(rule)
 
-    with open(args.output_prefix + ".subsampled.csv", "w") as fp:
-        fp.write("rid\n")
-        fp.write("\n".join(subsampled_uuids))
-
     # find all linked UUIDs
     profiles.add_uuids(subsampled_uuids)
     linked_uuids = profiles.get_linked_uuids()
 
-    with open(args.output_prefix + ".subsampled.linked.csv", "w") as fp:
+    with open(args.output, "w") as fp:
         fp.write("rid\n")
         fp.write("\n".join(linked_uuids))
 

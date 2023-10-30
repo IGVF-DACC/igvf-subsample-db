@@ -86,12 +86,12 @@ host    all             all             127.0.0.1/32            trust
 ```bash
 $ PLATFORM=encode # or igvf
 
-$ igvf_subsample_db create_rule_template -o example_subsampling_rule.json -p $PLATFORM
+$ create_rule_template -o example_subsampling_rule.json -p $PLATFORM
 ```
 
 Edit the template rule JSON file or use your own. Run the tool to get a CSV file with subsampled UUIDs.
 ```bash
-$ igvf_subsample_db get_subsampled_uuids [RULE_JSON_FILE] -o subsampled.csv -p $PLATFORM --debug
+$ get_subsampled_uuids [RULE_JSON_FILE] -o subsampled.csv -p $PLATFORM --debug
 ```
 
 Make a backup of the database.
@@ -107,7 +107,7 @@ $ psql
 
 Take the CSV file and feed it to the subsampler, this will directly modify the current PG database.
 ```bash
-$ igvf_subsample_db subsample_pg [SUBSAMPLED_CSV_FILE] -p $PLATFORM --debug
+$ subsample_pg [SUBSAMPLED_CSV_FILE] -p $PLATFORM --debug
 ```
 
 Login as `encoded` (ENCODE) or `igvfd` (IGVF). Reindex ElasticSearch.
@@ -127,7 +127,7 @@ $ curl -X GET 'localhost:9201/_cat/indices'
 $ create-mapping production.ini --app-name app
 
 # reindedx ES (IGVF)
-$ create-mapping production.ini --app-name app
+$ ...
 
 # check if all indices are back
 $ curl -X GET localhost:9201/_cat/indices

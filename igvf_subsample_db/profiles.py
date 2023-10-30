@@ -1,5 +1,6 @@
 import logging
 import math
+import os
 import random
 from collections import defaultdict
 
@@ -9,6 +10,10 @@ logger = logging.getLogger(__name__)
 
 SUBSAMPLING_RANDOM_SEED = 17
 UUIDS_PER_LOG = 10000
+TEMPLATE_RULE = {
+    "subsampling_min": 1,
+    "subsampling_rate": 1e-05,
+}
 
 
 class Profiles:
@@ -49,6 +54,16 @@ class Profiles:
             self.profile_names.add(profile_name)
 
         self._linked_uuids = set()
+
+    def create_template_rule(self):
+        """
+        Returns a template rule JSON.
+        """
+        result = {}
+        for profile_name in self.profile_names:
+            result[profile_name] = [TEMPLATE_RULE.copy()]
+
+        return result
 
     def subsample(self, rule):
         """
@@ -181,3 +196,216 @@ class Profiles:
 
     def get_linked_uuids(self):
         return self._linked_uuids
+
+    def subsample_pg(self, csv_file):
+        """
+        Subsamples PG database down to include uuids only in csv_file.
+        """
+        csv_file = os.path.abspath(csv_file)
+
+        logger.info("Transaction 1: Create a temp table and insert UUIDs from CSV.")
+
+        with self.database.conn:
+            with self.database.conn.cursor() as cur:
+
+                logger.info("Creating a temporary UUIDs table...")
+                cur.execute(
+                    """
+                    CREATE TABLE subsampled_rids(
+                      id SERIAL PRIMARY KEY,
+                      profile_name VARCHAR(50),
+                      rid UUID,
+                      UNIQUE(rid)
+                    );
+                    """
+                )
+
+                logger.info("Inserting UUIDs into temp table...")
+                cur.execute(
+                    f"""
+                    COPY subsampled_rids(rid)
+                    FROM '{csv_file}'
+                    DELIMITER ','
+                    CSV HEADER;
+                    """
+                )
+
+        logger.info("Transaction 2: Alter tables.")
+
+        with self.database.conn:
+            with self.database.conn.cursor() as cur:
+
+                logger.info("Dropping constraints of tables...")
+
+                logger.debug("Dropping constraint of current_propsheets")
+                cur.execute(
+                    """
+                    ALTER TABLE current_propsheets
+                      DROP CONSTRAINT "current_propsheets_rid_fkey";
+                    """
+                )
+                cur.execute(
+                    """
+                    ALTER TABLE current_propsheets
+                      DROP CONSTRAINT "current_propsheets_sid_fkey";
+                    """
+                )
+
+                logger.debug("Dropping constraint of keys...")
+                cur.execute(
+                    """
+                    ALTER TABLE keys
+                      DROP CONSTRAINT "keys_rid_fkey";
+                    """
+                )
+
+                logger.debug("Dropping constraint of links...")
+                cur.execute(
+                    """
+                    ALTER TABLE links
+                      DROP CONSTRAINT "links_source_fkey";
+                    """
+                )
+                cur.execute(
+                    """
+                    ALTER TABLE links
+                      DROP CONSTRAINT "links_target_fkey";
+                    """
+                )
+
+                logger.debug("Dropping constraint of propsheets...")
+                cur.execute(
+                    """
+                    ALTER TABLE propsheets
+                      DROP CONSTRAINT "fk_property_sheets_rid_name";
+                    """
+                )
+                cur.execute(
+                    """
+                    ALTER TABLE propsheets
+                      DROP CONSTRAINT "propsheets_rid_fkey";
+                    """
+                )
+                cur.execute(
+                    """
+                    ALTER TABLE propsheets
+                      DROP CONSTRAINT "propsheets_tid_fkey";
+                    """
+                )
+
+                logger.info("Deleting rows from tables...")
+
+                logger.debug("Deleting rows from resources...")
+                cur.execute(
+                    """
+                    DELETE FROM resources src
+                    WHERE NOT EXISTS (
+                       SELECT FROM subsampled_rids sub
+                       WHERE  sub.rid = src.rid
+                    );
+                    """
+                )
+
+                logger.debug("Deleting rows from keys...")
+                cur.execute(
+                    """
+                    DELETE FROM keys src
+                    WHERE NOT EXISTS (
+                       SELECT FROM subsampled_rids sub
+                       WHERE  sub.rid = src.rid
+                    );
+                    """
+                )
+
+                logger.debug("Deleting rows from links...")
+                cur.execute(
+                    """
+                    DELETE FROM links src
+                    WHERE NOT EXISTS (
+                       SELECT FROM subsampled_rids sub
+                       WHERE  sub.rid = src.source OR sub.rid = src.target
+                    );
+                    """
+                )
+
+                logger.debug("Deleting rows from current_propsheets...")
+                cur.execute(
+                    """
+                    DELETE FROM current_propsheets src
+                    WHERE NOT EXISTS (
+                       SELECT FROM subsampled_rids sub
+                       WHERE  sub.rid = src.rid
+                    );
+                    """
+                )
+
+                logger.debug("Deleting rows from propsheets...")
+                cur.execute(
+                    """
+                    DELETE FROM propsheets src
+                    WHERE NOT EXISTS (
+                       SELECT FROM subsampled_rids sub
+                       WHERE  sub.rid = src.rid
+                    );
+                    """
+                )
+
+                logger.info("Recovering constraints of tables...")
+
+                logger.debug("Recovering constraints of current_propsheets...")
+                cur.execute(
+                    """
+                    ALTER TABLE current_propsheets
+                      ADD CONSTRAINT "current_propsheets_rid_fkey" FOREIGN KEY (rid) REFERENCES resources(rid);
+                    """
+                )
+                cur.execute(
+                    """
+                    ALTER TABLE current_propsheets
+                      ADD CONSTRAINT "current_propsheets_sid_fkey" FOREIGN KEY (sid) REFERENCES propsheets(sid);
+                    """
+                )
+
+                logger.debug("Recovering constraints of keys...")
+                cur.execute(
+                    """
+                    ALTER TABLE keys
+                      ADD CONSTRAINT "keys_rid_fkey" FOREIGN KEY (rid) REFERENCES resources(rid);
+                    """
+                )
+
+                logger.debug("Recovering constraints of links...")
+                cur.execute(
+                    """
+                    ALTER TABLE links
+                      ADD CONSTRAINT "links_source_fkey" FOREIGN KEY (source) REFERENCES resources(rid);
+                    """
+                )
+                cur.execute(
+                    """
+                    ALTER TABLE links
+                      ADD CONSTRAINT "links_target_fkey" FOREIGN KEY (target) REFERENCES resources(rid);
+                    """
+                )
+
+                logger.debug("Recovering constraints of propsheets...")
+                cur.execute(
+                    """
+                    ALTER TABLE propsheets
+                      ADD CONSTRAINT "fk_property_sheets_rid_name" FOREIGN KEY (rid, name) REFERENCES current_propsheets(rid, name) DEFERRABLE INITIALLY DEFERRED;
+                    """
+                )
+                cur.execute(
+                    """
+                    ALTER TABLE propsheets
+                      ADD CONSTRAINT "propsheets_rid_fkey" FOREIGN KEY (rid) REFERENCES resources(rid) DEFERRABLE INITIALLY DEFERRED;
+                    """
+                )
+                cur.execute(
+                    """
+                    ALTER TABLE propsheets
+                      ADD CONSTRAINT "propsheets_tid_fkey" FOREIGN KEY (tid) REFERENCES transactions(tid) DEFERRABLE INITIALLY DEFERRED;
+                    """
+                )
+
+        logger.info("subsampling PG is all done.")

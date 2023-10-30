@@ -14,29 +14,11 @@ class Database:
     def __del__(self):
         self.conn.close()
 
+    def conn(self):
+        return self.conn
+
     def fetchall(self, query):
-        cursor = self.conn.cursor()
-        cursor.execute(query)
-        return cursor.fetchall()
-
-    def commit(self, query):
-        self.conn.cursor().execute(query)
-        self.conn.commit()
-
-
-class SubsampleDatabase:
-    def __init__(self, database):
-        """
-        Args:
-            database: Database object
-        """
-        self.database = database
-
-    def subsampleDatabase(self, uuids):
-        pass
-
-    def _drop_constraints(self):
-        pass
-
-    def _rebuild_constraints(self):
-        pass
+        with self.conn:
+            with self.conn.cursor() as cur:
+                cur.execute(query)
+                return cur.fetchall()
