@@ -38,7 +38,6 @@ class Profiles:
             "SELECT * FROM links"
         ):
             self.links[source_uuid].add(target_uuid)
-            self.links[target_uuid].add(source_uuid)
 
         logger.info("Loading resources from DB...")
         self.uuid_to_profile = {}
@@ -319,13 +318,23 @@ class Profiles:
                     """
                 )
 
-                logger.debug("Deleting rows from links...")
+                logger.debug("Deleting rows from links (source)...")
                 cur.execute(
                     """
                     DELETE FROM links src
                     WHERE NOT EXISTS (
                        SELECT FROM subsampled_rids sub
-                       WHERE  sub.rid = src.source OR sub.rid = src.target
+                       WHERE  sub.rid = src.source
+                    );
+                    """
+                )
+                logger.debug("Deleting rows from links (target)...")
+                cur.execute(
+                    """
+                    DELETE FROM links src
+                    WHERE NOT EXISTS (
+                       SELECT FROM subsampled_rids sub
+                       WHERE  sub.rid = src.target
                     );
                     """
                 )
