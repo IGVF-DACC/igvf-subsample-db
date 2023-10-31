@@ -29,7 +29,25 @@ def main():
         "-d", "--database",
         help="Use encoded for ENCODE, igvfd for IGVF.",
         required=True,
-        choices=["encoded", "igvfd", "test_encoded", "test_igvfd"],
+    )
+    parser.add_argument(
+        "-U", "--user",
+        help="PG username.",
+        default="postgres",
+    )
+    parser.add_argument(
+        "-p", "--port",
+        help="PG port.",
+        default=5432,
+    )
+    parser.add_argument(
+        "-h", "--host",
+        help="PG hostname.",
+        default="127.0.0.1",
+    )
+    parser.add_argument(
+        "-P", "--password",
+        help="PG password.",
     )
     parser.add_argument(
         '--debug',
@@ -45,7 +63,13 @@ def main():
     with open(args.rule_file) as fp:
         rule = json.load(fp)
 
-    database = Database(args.database)
+    database = Database(
+        database=args.database,
+        user=args.user,
+        password=args.password,
+        host=args.host,
+        port=args.port,
+    )
     profiles = Profiles(database)
 
     # subsample UUIDs with rule for each profile

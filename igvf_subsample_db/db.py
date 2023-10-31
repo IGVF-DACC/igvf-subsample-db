@@ -2,7 +2,14 @@ import psycopg2
 
 
 class Database:
-    def __init__(self, database, user="postgres", password="postgres", host="127.0.0.1", port=5432):
+    def __init__(
+        self,
+        database,
+        user="postgres",
+        password="postgres",
+        host="127.0.0.1",
+        port=5432,
+    ):
         self.conn = psycopg2.connect(
             user=user,
             password=password,
@@ -18,6 +25,8 @@ class Database:
         return self.conn
 
     def fetchall(self, query):
+        """Wrapper for SELECT.
+        """
         with self.conn:
             with self.conn.cursor() as cur:
                 cur.execute(query)

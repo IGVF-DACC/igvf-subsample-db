@@ -430,4 +430,27 @@ class Profiles:
                     """
                 )
 
+        logger.info("Transaction 3: Cleaning up temp tables.")
+
+        with self.database.conn:
+            with self.database.conn.cursor() as cur:
+
+                logger.info("Dropping a temp table...")
+                cur.execute(
+                    """
+                    Drop TABLE subsampled_rids;
+                    """
+                )
+
+        logger.info("Transaction 4: Free up deleted rows.")
+
+        with self.database.conn:
+            with self.database.conn.cursor() as cur:
+
+                cur.execute(
+                    """
+                    VACUUM;
+                    """
+                )
+
         logger.info("subsampling PG is all done.")
