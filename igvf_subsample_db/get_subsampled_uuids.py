@@ -41,7 +41,7 @@ def main():
         default=5432,
     )
     parser.add_argument(
-        "-h", "--host",
+        "-H", "--host",
         help="PG hostname.",
         default="127.0.0.1",
     )
