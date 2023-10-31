@@ -54,7 +54,7 @@ For the case of `file` profile in the above example, there are currently `145853
 You can have multiple rules under a single profile. See the case of `experiment` profile in the above example. It will include at least 3 `ATAC-Seq` experiments and 5 `ChIP-seq` experiments.
 
 
-## Running the subsampler with a RDS Database
+## Running the subsampler with a RDS Database (IGVF)
 
 1) Login on AWS Console and go to [RDS](https://us-west-2.console.aws.amazon.com/rds/home?region=us-west-2#databases:). Take a snapshot of existing DB (dev or production) and restore it on a new RDS instance. `Modify` the new instance and give it a new master password.
 
@@ -64,12 +64,14 @@ You can have multiple rules under a single profile. See the case of `experiment`
 
 4) SSH to the EC2 instance and install Postgresql and start the service. Login as `postgres` with the master password. and install this tool. You are ready to run the tool. `DATABASE_NAME` is `encoded` for ENCODE and `igvfd` for IGVF.
 ```bash
-$ sudo apt-get install postgresql
+$ sudo apt-get update -y
+$ sudo apt-get install postgresql python3-pip libpq-dev -y
 $ sudo service postgresql start
 
 # Login as postgres
 $ sudo su postgres
-$ pip install igvf-subsample-db # or python3 setup.py install
+$ cd
+$ pip3 install igvf-subsample-db # or python3 setup.py install
 ```
 
 5) (Optional) Create a template rule JSON and edit it. You can also use example rules on `examples/` folder.
