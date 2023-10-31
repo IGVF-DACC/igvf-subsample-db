@@ -19,13 +19,16 @@ TEMPLATE_RULE = {
 class Profiles:
     def __init__(self, database):
         """
-        Member vars:
+        Member variables:
             self.links:
                 A dict of {source_uuid: [target_uuids...]}
-            self.resources:
-                A dict of {profile_name: [uuids...]}
             self.uuid_to_profile:
                 A dict of {uuid: profile_name}
+            self.profile_names:
+                A set of profile names
+            self._linked_uuids:
+                A set of all UUIDs that linked within them
+                Use self.add_uuid(uuid) to recursively add linked UUIDs
         """
         self.database = database
 
@@ -35,14 +38,13 @@ class Profiles:
             "SELECT * FROM links"
         ):
             self.links[source_uuid].add(target_uuid)
+            self.links[target_uuid].add(source_uuid)
 
         logger.info("Loading resources from DB...")
-        # self.resources = defaultdict(set)
         self.uuid_to_profile = {}
         for uuid, profile_name in self.database.fetchall(
             "SELECT * FROM resources"
         ):
-            # self.resources[profile_name].add(uuid)
             self.uuid_to_profile[uuid] = profile_name
 
         logger.info("Loading distinct profiles from DB...")
@@ -356,13 +358,15 @@ class Profiles:
                 cur.execute(
                     """
                     ALTER TABLE current_propsheets
-                      ADD CONSTRAINT "current_propsheets_rid_fkey" FOREIGN KEY (rid) REFERENCES resources(rid);
+                      ADD CONSTRAINT "current_propsheets_rid_fkey"
+                      FOREIGN KEY (rid) REFERENCES resources(rid);
                     """
                 )
                 cur.execute(
                     """
                     ALTER TABLE current_propsheets
-                      ADD CONSTRAINT "current_propsheets_sid_fkey" FOREIGN KEY (sid) REFERENCES propsheets(sid);
+                      ADD CONSTRAINT "current_propsheets_sid_fkey"
+                      FOREIGN KEY (sid) REFERENCES propsheets(sid);
                     """
                 )
 
@@ -370,7 +374,8 @@ class Profiles:
                 cur.execute(
                     """
                     ALTER TABLE keys
-                      ADD CONSTRAINT "keys_rid_fkey" FOREIGN KEY (rid) REFERENCES resources(rid);
+                      ADD CONSTRAINT "keys_rid_fkey"
+                      FOREIGN KEY (rid) REFERENCES resources(rid);
                     """
                 )
 
@@ -378,13 +383,15 @@ class Profiles:
                 cur.execute(
                     """
                     ALTER TABLE links
-                      ADD CONSTRAINT "links_source_fkey" FOREIGN KEY (source) REFERENCES resources(rid);
+                      ADD CONSTRAINT "links_source_fkey"
+                      FOREIGN KEY (source) REFERENCES resources(rid);
                     """
                 )
                 cur.execute(
                     """
                     ALTER TABLE links
-                      ADD CONSTRAINT "links_target_fkey" FOREIGN KEY (target) REFERENCES resources(rid);
+                      ADD CONSTRAINT "links_target_fkey"
+                      FOREIGN KEY (target) REFERENCES resources(rid);
                     """
                 )
 
@@ -392,19 +399,25 @@ class Profiles:
                 cur.execute(
                     """
                     ALTER TABLE propsheets
-                      ADD CONSTRAINT "fk_property_sheets_rid_name" FOREIGN KEY (rid, name) REFERENCES current_propsheets(rid, name) DEFERRABLE INITIALLY DEFERRED;
+                      ADD CONSTRAINT "fk_property_sheets_rid_name"
+                      FOREIGN KEY (rid, name) REFERENCES current_propsheets(rid, name)
+                      DEFERRABLE INITIALLY DEFERRED;
                     """
                 )
                 cur.execute(
                     """
                     ALTER TABLE propsheets
-                      ADD CONSTRAINT "propsheets_rid_fkey" FOREIGN KEY (rid) REFERENCES resources(rid) DEFERRABLE INITIALLY DEFERRED;
+                      ADD CONSTRAINT "propsheets_rid_fkey"
+                      FOREIGN KEY (rid) REFERENCES resources(rid)
+                      DEFERRABLE INITIALLY DEFERRED;
                     """
                 )
                 cur.execute(
                     """
                     ALTER TABLE propsheets
-                      ADD CONSTRAINT "propsheets_tid_fkey" FOREIGN KEY (tid) REFERENCES transactions(tid) DEFERRABLE INITIALLY DEFERRED;
+                      ADD CONSTRAINT "propsheets_tid_fkey"
+                      FOREIGN KEY (tid) REFERENCES transactions(tid)
+                      DEFERRABLE INITIALLY DEFERRED;
                     """
                 )
 
