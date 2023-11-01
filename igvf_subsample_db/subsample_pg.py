@@ -37,7 +37,6 @@ def main():
     parser.add_argument(
         "-H", "--host",
         help="PG hostname.",
-        default="127.0.0.1",
     )
     parser.add_argument(
         "-P", "--password",
