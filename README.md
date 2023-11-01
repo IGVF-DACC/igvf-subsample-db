@@ -47,9 +47,9 @@ A rule is consist of `subsampling_min`, `subsampling_rate` and `subsampling_cond
 * `subsampling_rate` defines the minimum number of objects as total (respecting `subsampling_cond` if defined) number of objects in the profile multiplied by the rate. MAX of these two values will be taken as the final number of subsampled objects in the profile.
 * `subsampling_cond` is a JSON object that defines conditions for the rule. For the above example, this will only subsample objects with a property `assay_term_name` defined as `ChIP-seq`. You can use any valid property in a profile. See profile's schema JSON to find such property.
 
-There are currently `12548` `ChIP-seq` experiments and it will subsample `12548` objects down to `MAX(5, 1e-05*12548) = 5`.
+There are currently 12548 `ChIP-seq` experiments and it will subsample 12548 objects down to `MAX(5, 1e-05*12548) = 5`.
 
-For the case of `file` profile in the above example, there are currently `1458539` `file` objects on ENCODE. So it will subsample `1458539` objects down to `MAX(100, 1e-03 * 1458539) = 1458`.
+For the case of `file` profile in the above example, there are currently 1458539 `file` objects on ENCODE. So it will subsample `1458539` objects down to `MAX(100, 1e-03 * 1458539) = 1458`.
 
 You can have multiple rules under a single profile. See the case of `experiment` profile in the above example. It will include at least 3 `ATAC-Seq` experiments and 5 `ChIP-seq` experiments.
 
@@ -62,7 +62,7 @@ You can have multiple rules under a single profile. See the case of `experiment`
 
 3) Go back to RDS instance on AWS Console. Click on `Actions` and then `Set up EC2 connection`. Connect it to the new EC2 instance. Copy DB hostname (endpoint) and port.
 
-4) SSH to the EC2 instance and install Postgresql and start the service. Login as `postgres` with the master password. and install this tool. You are ready to run the tool. `DATABASE_NAME` is `encoded` for ENCODE and `igvfd` for IGVF.
+4) SSH to the EC2 instance and install Postgresql and start the service. Login as `postgres`. and install this tool. You are ready to run the tool. `DATABASE_NAME` is `encoded` for ENCODE and `igvfd` for IGVF.
 ```bash
 $ sudo apt-get update -y
 $ sudo apt-get install postgresql python3-pip libpq-dev -y
@@ -84,11 +84,11 @@ $ create_rule_template -o subsampling_rule.json -d DATABASE_NAME -P PASSWORD --h
 $ get_subsampled_uuids subsampling_rule.json -o subsampled.csv -P PASSWORD --host RDS_INSTANCE_HOSTNAME
 ```
 
-7) Use the CSV file to actually subsample PG DB.
+7) Use the CSV file to subsample PG DB.
 ```bash
 $ subsample_pg subsampled.csv -d DATABASE_NAME -P PASSWORD --host RDS_INSTANCE_HOSTNAME
 ```
 
-## Running the subsampler on a demo machine
+## Running the subsampler on a demo machine (ENCODE)
 
 See [this document](/docs/installation_on_encode_demo_machine for details.md).
