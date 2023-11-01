@@ -95,6 +95,24 @@ class Profiles:
                     ]
                 }
         """
+        with self.database.conn:
+            with self.database.conn.cursor() as cur:
+                logger.info("Creating a view temp_object...")
+
+                cur.execute(
+                    """
+                    CREATE OR REPLACE VIEW temp_object AS
+                      SELECT resources.rid,
+                        resources.item_type,
+                        propsheets.properties,
+                        propsheets.tid
+                       FROM resources
+                         JOIN current_propsheets USING (rid)
+                         JOIN propsheets USING (rid, name, sid)
+                      WHERE current_propsheets.name::text = ''::text;
+                    """
+                )
+
         # result dict
         subsampled_uuids = set()
 
@@ -133,22 +151,7 @@ class Profiles:
                 else:
                     cond_sql = ""
 
-                # old query used for ENCODE
-                # query = f"SELECT rid FROM object WHERE item_type='{profile_name}' {cond_sql}"
-
-                # unlike ENCODE, IGVF doesn't have a view 'object'
-                # so here we join two tables with rid using SELECT DISTINCT ON
-                # to get top 1 row of 'propsheets' table grouped by rid
-                query = f"""
-                        WITH props AS (
-                            SELECT DISTINCT ON (rid) rid, properties
-                            FROM propsheets
-                        )
-                        SELECT resources.rid
-                        FROM resources
-                        LEFT JOIN props ON props.rid = resources.rid
-                        WHERE item_type='{profile_name}' {cond_sql}
-                        """
+                query = f"SELECT rid FROM temp_object WHERE item_type='{profile_name}' {cond_sql}"
 
                 logger.info(
                     f"Subsampling for profile {profile_name} with "
@@ -173,6 +176,11 @@ class Profiles:
                     subsampled = set(random.choices(uuids, k=num_subsampled))
                     logger.debug(f"\t{subsampled}")
                     subsampled_uuids.update(subsampled)
+
+        with self.database.conn:
+            with self.database.conn.cursor() as cur:
+                logger.info("Deleting a view temp_object...")
+                cur.execute("DROP VIEW IF EXISTS temp_object")
 
         return subsampled_uuids
 
