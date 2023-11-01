@@ -133,7 +133,22 @@ class Profiles:
                 else:
                     cond_sql = ""
 
-                query = f"SELECT rid FROM object WHERE item_type='{profile_name}' {cond_sql}"
+                # old query used for ENCODE
+                # query = f"SELECT rid FROM object WHERE item_type='{profile_name}' {cond_sql}"
+
+                # unlike ENCODE, IGVF doesn't have a view 'object'
+                # so here we join two tables with rid using SELECT DISTINCT ON
+                # to get top 1 row of 'propsheets' table grouped by rid
+                query = f"""
+                        WITH props AS (
+                            SELECT DISTINCT ON (rid) rid, properties
+                            FROM propsheets
+                        )
+                        SELECT resources.rid
+                        FROM resources
+                        LEFT JOIN props ON props.rid = resources.rid
+                        WHERE item_type='{profile_name}' {cond_sql}
+                        """
 
                 logger.info(
                     f"Subsampling for profile {profile_name} with "
