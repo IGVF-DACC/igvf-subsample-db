@@ -1,0 +1,266 @@
+{
+    "construct_library_set": [
+        {
+            "subsampling_min": 1,
+            "subsampling_rate": 1e-05
+        }
+    ],
+    "analysis_step": [
+        {
+            "subsampling_min": 1,
+            "subsampling_rate": 1e-05
+        }
+    ],
+    "configuration_file": [
+        {
+            "subsampling_min": 1,
+            "subsampling_rate": 1e-05
+        }
+    ],
+    "analysis_set": [
+        {
+            "subsampling_min": 1,
+            "subsampling_rate": 1e-05
+        }
+    ],
+    "rodent_donor": [
+        {
+            "subsampling_min": 1,
+            "subsampling_rate": 1e-05
+        }
+    ],
+    "platform_term": [
+        {
+            "subsampling_min": 1,
+            "subsampling_rate": 1e-05
+        }
+    ],
+    "lab": [
+        {
+            "subsampling_min": 1,
+            "subsampling_rate": 1e-05
+        }
+    ],
+    "image": [
+        {
+            "subsampling_min": 1,
+            "subsampling_rate": 1e-05
+        }
+    ],
+    "tissue": [
+        {
+            "subsampling_min": 1,
+            "subsampling_rate": 1e-05
+        }
+    ],
+    "software_version": [
+        {
+            "subsampling_min": 1,
+            "subsampling_rate": 1e-05
+        }
+    ],
+    "auxiliary_set": [
+        {
+            "subsampling_min": 1,
+            "subsampling_rate": 1e-05
+        }
+    ],
+    "primary_cell": [
+        {
+            "subsampling_min": 1,
+            "subsampling_rate": 1e-05
+        }
+    ],
+    "curated_set": [
+        {
+            "subsampling_min": 1,
+            "subsampling_rate": 1e-05
+        }
+    ],
+    "software": [
+        {
+            "subsampling_min": 1,
+            "subsampling_rate": 1e-05
+        }
+    ],
+    "document": [
+        {
+            "subsampling_min": 1,
+            "subsampling_rate": 1e-05
+        }
+    ],
+    "sequence_file": [
+        {
+            "subsampling_min": 1,
+            "subsampling_rate": 1e-05
+        }
+    ],
+    "prediction_set": [
+        {
+            "subsampling_min": 1,
+            "subsampling_rate": 1e-05
+        }
+    ],
+    "phenotype_term": [
+        {
+            "subsampling_min": 1,
+            "subsampling_rate": 1e-05
+        }
+    ],
+    "user": [
+        {
+            "subsampling_min": 1,
+            "subsampling_rate": 1e-05
+        }
+    ],
+    "treatment": [
+        {
+            "subsampling_min": 1,
+            "subsampling_rate": 1e-05
+        }
+    ],
+    "publication": [
+        {
+            "subsampling_min": 1,
+            "subsampling_rate": 1e-05
+        }
+    ],
+    "gene": [
+        {
+            "subsampling_min": 1,
+            "subsampling_rate": 1e-05
+        }
+    ],
+    "award": [
+        {
+            "subsampling_min": 1,
+            "subsampling_rate": 1e-05
+        }
+    ],
+    "human_genomic_variant": [
+        {
+            "subsampling_min": 1,
+            "subsampling_rate": 1e-05
+        }
+    ],
+    "page": [
+        {
+            "subsampling_min": 1,
+            "subsampling_rate": 1e-05
+        }
+    ],
+    "model_set": [
+        {
+            "subsampling_min": 1,
+            "subsampling_rate": 1e-05
+        }
+    ],
+    "multiplexed_sample": [
+        {
+            "subsampling_min": 1,
+            "subsampling_rate": 1e-05
+        }
+    ],
+    "human_donor": [
+        {
+            "subsampling_min": 1,
+            "subsampling_rate": 1e-05
+        }
+    ],
+    "matrix_file": [
+        {
+            "subsampling_min": 1,
+            "subsampling_rate": 1e-05
+        }
+    ],
+    "in_vitro_system": [
+        {
+            "subsampling_min": 1,
+            "subsampling_rate": 1e-05
+        }
+    ],
+    "alignment_file": [
+        {
+            "subsampling_min": 1,
+            "subsampling_rate": 1e-05
+        }
+    ],
+    "phenotypic_feature": [
+        {
+            "subsampling_min": 1,
+            "subsampling_rate": 1e-05
+        }
+    ],
+    "reference_file": [
+        {
+            "subsampling_min": 1,
+            "subsampling_rate": 1e-05
+        }
+    ],
+    "biomarker": [
+        {
+            "subsampling_min": 1,
+            "subsampling_rate": 1e-05
+        }
+    ],
+    "workflow": [
+        {
+            "subsampling_min": 1,
+            "subsampling_rate": 1e-05
+        }
+    ],
+    "whole_organism": [
+        {
+            "subsampling_min": 1,
+            "subsampling_rate": 1e-05
+        }
+    ],
+    "technical_sample": [
+        {
+            "subsampling_min": 1,
+            "subsampling_rate": 1e-05
+        }
+    ],
+    "assay_term": [
+        {
+            "subsampling_min": 1,
+            "subsampling_rate": 1e-05
+        }
+    ],
+    "measurement_set": [
+        {
+            "subsampling_min": 20,
+            "subsampling_rate": 1e-05
+        }
+    ],
+    "access_key": [
+        {
+            "subsampling_min": 1,
+            "subsampling_rate": 1e-05
+        }
+    ],
+    "sample_term": [
+        {
+            "subsampling_min": 1,
+            "subsampling_rate": 1e-05
+        }
+    ],
+    "source": [
+        {
+            "subsampling_min": 1,
+            "subsampling_rate": 1e-05
+        }
+    ],
+    "modification": [
+        {
+            "subsampling_min": 1,
+            "subsampling_rate": 1e-05
+        }
+    ],
+    "signal_file": [
+        {
+            "subsampling_min": 1,
+            "subsampling_rate": 1e-05
+        }
+    ]
+}
