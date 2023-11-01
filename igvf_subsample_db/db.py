@@ -25,9 +25,20 @@ class Database:
         return self.conn
 
     def fetchall(self, query):
-        """Wrapper for SELECT.
+        """
+        Wrapper for SELECT.
         """
         with self.conn:
             with self.conn.cursor() as cur:
                 cur.execute(query)
                 return cur.fetchall()
+
+    def vacuum(self):
+        """
+        Workaround to run VACCUM FULL outside of a transaction
+        https://stackoverflow.com/a/1017655
+        """
+        old_isolation_level = self.conn.isolation_level
+        self.conn.set_isolation_level(0)
+        self._doQuery("VACUUM FULL")
+        self.conn.set_isolation_level(old_isolation_level)

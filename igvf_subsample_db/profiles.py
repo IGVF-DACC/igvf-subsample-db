@@ -181,6 +181,10 @@ class Profiles:
             self.add_uuid(uuid)
 
     def add_uuid(self, uuid, depth=0, parent_uuids=()):
+        """
+        Recursively add UUIDs by traversing a tree search in a top-down fashion.
+        i.e. source -> target in links table.
+        """
         if uuid in self._linked_uuids:
             return
 
@@ -237,14 +241,15 @@ class Profiles:
                 )
 
                 logger.info("Inserting UUIDs into temp table...")
-                cur.execute(
-                    f"""
-                    COPY subsampled_rids(rid)
-                    FROM '{csv_file}'
-                    DELIMITER ','
-                    CSV HEADER;
-                    """
-                )
+                # use copy_expert() to make it work with remote server
+                with open(csv_file) as fp:
+                    cur.copy_expert(
+                        """
+                        COPY subsampled_rids(rid)
+                        FROM STDIN WITH HEADER CSV;
+                        """,
+                        fp
+                    )
 
         logger.info("Transaction 2: Alter tables.")
 
@@ -459,13 +464,6 @@ class Profiles:
 
         logger.info("Transaction 4: Free up deleted rows.")
 
-        with self.database.conn:
-            with self.database.conn.cursor() as cur:
-
-                cur.execute(
-                    """
-                    VACUUM;
-                    """
-                )
+        self.database.vacuum()
 
         logger.info("subsampling PG is all done.")
