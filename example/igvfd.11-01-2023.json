@@ -109,7 +109,7 @@
     ],
     "user": [
         {
-            "subsampling_min": 1,
+            "subsampling_min": 10000000,
             "subsampling_rate": 1e-05
         }
     ],

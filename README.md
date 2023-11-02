@@ -43,7 +43,7 @@ A rule is consist of `subsampling_min`, `subsampling_rate` and `subsampling_cond
 }
 ```
 
-* `subsampling_min` defines the minimum number of objects in the profile after subsampling.
+* `subsampling_min` defines the minimum number of objects in the profile after subsampling. It's bound to the actual number of objects. i.e. taking `MIN(number_of_objects, subsampling_min)`.
 * `subsampling_rate` defines the minimum number of objects as total (respecting `subsampling_cond` if defined) number of objects in the profile multiplied by the rate. MAX of these two values will be taken as the final number of subsampled objects in the profile.
 * `subsampling_cond` is a JSON object that defines conditions for the rule. For the above example, this will only subsample objects with a property `assay_term_name` defined as `ChIP-seq`. You can use any valid property in a profile. See profile's schema JSON to find such property.
 
@@ -52,6 +52,11 @@ There are currently 12548 `ChIP-seq` experiments and it will subsample 12548 obj
 For the case of `file` profile in the above example, there are currently 1458539 `file` objects on ENCODE. So it will subsample `1458539` objects down to `MAX(100, 1e-03 * 1458539) = 1458`.
 
 You can have multiple rules under a single profile. See the case of `experiment` profile in the above example. It will include at least 3 `ATAC-Seq` experiments and 5 `ChIP-seq` experiments.
+
+> **IMPORTANT**: Some users and their access_keys are important to run a server. Therefore, two examples keep **ALL** `user` for subsampling. i.e. `"subsampling_min": 1000000` is defined for `user`.
+
+
+Examples keep **ALL** users after subsampling.
 
 
 ## Running the subsampler with a RDS Database (IGVF)
