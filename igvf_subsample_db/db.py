@@ -40,5 +40,6 @@ class Database:
         """
         old_isolation_level = self.conn.isolation_level
         self.conn.set_isolation_level(0)
-        self._doQuery("VACUUM FULL")
+        self.conn.cursor().execute("VACUUM FULL")
+        self.conn.commit()
         self.conn.set_isolation_level(old_isolation_level)
