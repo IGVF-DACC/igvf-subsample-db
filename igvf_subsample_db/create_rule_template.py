@@ -66,6 +66,15 @@ def main():
 
     template_rule = profiles.create_template_rule()
 
+    # some users accounts are used for running services for a server
+    # so we keep ALL users
+    template_rule["user"] = [
+        {
+            "subsampling_min": 100000000,
+            "subsampling_rate": 1e-05,
+        }
+    ]
+
     with open(args.output, "w") as fp:
         fp.write(json.dumps(template_rule, indent=4))
 
