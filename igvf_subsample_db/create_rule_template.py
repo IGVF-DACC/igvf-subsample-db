@@ -74,6 +74,12 @@ def main():
             "subsampling_rate": 1e-05,
         }
     ]
+    template_rule["access_keys"] = [
+        {
+            "subsampling_min": 100000000,
+            "subsampling_rate": 1e-05,
+        }
+    ]
 
     with open(args.output, "w") as fp:
         fp.write(json.dumps(template_rule, indent=4))

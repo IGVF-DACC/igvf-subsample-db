@@ -5,8 +5,7 @@ Some important notes on necessary objects to run a server:
         (e.g. indexer) for a server. so it's recommended to keep all users after
         subsampling.
     access_key:
-        If you keep a certain user for subsampling then it will automatically keep
-        corresponding access_keys.
+        It's recommended to keep all access_keys.
 """
 import logging
 import math
