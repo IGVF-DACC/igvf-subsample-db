@@ -6,8 +6,8 @@ class Database:
         self,
         database,
         user="postgres",
-        password="postgres",
-        host="127.0.0.1",
+        password=None,
+        host=None,
         port=5432,
     ):
         self.conn = psycopg2.connect(
