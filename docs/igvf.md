@@ -1,3 +1,10 @@
+## Creating a new demo machine testing
+
+See [backend documentation](https://github.com/IGVF-DACC/igvfd/tree/dev/cdk).
+
+You may also need to spin up a UI [frontend](https://github.com/IGVF-DACC/igvf-ui/tree/dev/cdk) for further testing.
+
+
 ## Running the subsampler with a RDS Database (IGVF)
 
 1) Login on AWS Console and go to [RDS](https://us-west-2.console.aws.amazon.com/rds/home?region=us-west-2#databases:). Take a snapshot of existing DB (dev or production) and restore it on a new RDS instance.
@@ -34,7 +41,3 @@ $ get_subsampled_uuids subsampling_rule.json -o subsampled.csv -d igvfd -P PASSW
 ```bash
 $ subsample_pg subsampled.csv -d igvfd -P PASSWORD --host RDS_INSTANCE_HOSTNAME
 ```
-
-## Running the subsampler on a demo machine (ENCODE)
-
-See [this document](/docs/installation_on_encode_demo_machine for details.md).

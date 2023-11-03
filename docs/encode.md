@@ -1,3 +1,8 @@
+## Creating a new demo machine testing
+
+See [this document](https://github.com/ENCODE-DCC/encoded#deploying-an-aws-demo) for details.
+
+
 ## Running the subsampler on a demo machine (ENCODE)
 
 SSH to a demo instance, login as `root` and stop web server and ES.
