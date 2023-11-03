@@ -182,7 +182,7 @@ class Profiles:
                     subsampling_min
                 )
                 if num_subsampled:
-                    subsampled = set(random.choices(uuids, k=min(len(uuids), num_subsampled)))
+                    subsampled = set(random.sample(uuids, k=min(len(uuids), num_subsampled)))
                     logger.debug(f"\t{subsampled}")
                     subsampled_uuids.update(subsampled)
 
