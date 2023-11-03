@@ -53,7 +53,7 @@ For the case of `file` profile in the above example, there are currently 1458539
 
 You can have multiple rules under a single profile. See the case of `experiment` profile in the above example. It will include at least 3 `ATAC-Seq` experiments and 5 `ChIP-seq` experiments.
 
-> **IMPORTANT**: Some users and their access_keys are important to run a server. Therefore, two examples keep **ALL** `user` for subsampling. i.e. `"subsampling_min": 1000000` is defined for `user`.
+> **IMPORTANT**: Some users and their access_keys are important to run a server. Therefore, two examples keep **ALL** `user` and `access_key` for subsampling. i.e. `"subsampling_min": 1000000` is defined for `user` and `access_key`.
 
 
 Examples keep **ALL** users after subsampling.
