@@ -40,7 +40,7 @@ Take the CSV file and feed it to the subsampler, this will directly modify the c
 $ subsample_pg subsampled.csv -d encoded
 ```
 
-If you see the following deadlock errors. Make sure that there are other processes trying to connect to the DB (e.g. apache2, ES). Stop those services and try again.
+If you see the following deadlock errors. Stop any process trying to connect to the DB (e.g. apache2, ES). Stop those services and try again.
 ```bash
 Traceback (most recent call last):
   File "bin/subsample_pg", line 13, in <module>
