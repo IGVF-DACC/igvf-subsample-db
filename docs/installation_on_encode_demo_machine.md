@@ -55,9 +55,14 @@ Process 20451 waits for AccessShareLock on relation 16392 of database 16401; blo
 HINT:  See server log for query details.
 ```
 
+Login as `root` and Start ES.
+```bash
+$ service elasticsearch start
+```
+
 Login as `encoded`. Reindex ElasticSearch.
 ```bash
-$ sudo su encoded # or igvfd
+$ sudo su encoded
 
 # check indices first
 $ curl -X GET 'localhost:9201/_cat/indices'
@@ -75,10 +80,9 @@ $ create-mapping production.ini --app-name app
 $ curl -X GET localhost:9201/_cat/indices
 ```
 
-Wait for 30m and login as `root` and then start web server and ES.
+Wait for 30m and login as `root` and then start web server.
 ```bash
 $ service apache2 start
-$ service elasticsearch start
 ```
 
 Visit the demo site and login as an admin account. Run the reindexer via URL. Open URL `YOUR_DEMO_ENDPOINT/_indexer_state?reindex=all`.
