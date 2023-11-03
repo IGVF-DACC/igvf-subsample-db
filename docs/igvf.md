@@ -24,7 +24,14 @@ $ sudo service postgresql start
 # Login as postgres
 $ sudo su postgres
 $ cd
-$ pip3 install igvf-subsample-db # or python3 setup.py install
+
+# install the tool from pip
+$ pip3 install igvf-subsample-db
+
+# install the tool from setup.py
+$ git clone https://github.com/igvf-dacc/igvf-subsample-db
+$ cd igvf-subsample-db
+$ python3 setup.py install --user
 ```
 
 5) (Optional) Create a template rule JSON and edit it. You can also use example rules on `examples/` folder.

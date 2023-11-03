@@ -14,7 +14,15 @@ $ service elasticsearch stop
 Login as `postgres` and install the tool.
 ```bash
 $ sudo su postgres
-$ pip install igvf_subsample_db
+$ cd
+
+# install the tool from pip
+$ pip3 install igvf-subsample-db
+
+# install the tool from setup.py
+$ git clone https://github.com/igvf-dacc/igvf-subsample-db
+$ cd igvf-subsample-db
+$ python3 setup.py install --user
 ```
 
 Edit `/etc/postgresql/11/main/pg_hba.conf` (md5 -> trust) to allow local connection from the tool.
