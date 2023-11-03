@@ -1,4 +1,4 @@
-## Running the subsampler
+## Running the subsampler on a demo machine (ENCODE)
 
 SSH to a demo instance, login as `root` and stop web server and ES.
 ```bash
