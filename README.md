@@ -28,7 +28,7 @@ This file defines subsampling rule(s) for each profile (e.g. `experiment` for EN
                 "assay_term_name": "ChIP-seq"
             }
         }
-	]
+    ]
 }
 ```
 
