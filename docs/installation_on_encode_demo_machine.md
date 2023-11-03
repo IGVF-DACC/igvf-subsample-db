@@ -1,12 +1,9 @@
-## Deploying a new ENCODE demo instance
-
-See https://github.com/ENCODE-DCC/encoded#deploying-an-aws-demo for ENCODE and 
-
 ## Running the subsampler
 
-SSH to a demo instance, login as `root` and stop a web server.
+SSH to a demo instance, login as `root` and stop web server and ES.
 ```bash
 $ service apache2 stop
+$ service elasticsearch stop
 ```
 
 Login as `postgres` and install the tool.
@@ -24,14 +21,12 @@ host    all             all             127.0.0.1/32            trust
 
 (Optional) Create a template rule JSON. You can find more [examples](/examples) on this repo.
 ```bash
-$ PLATFORM=encode # or igvf
-
-$ create_rule_template -o subsampling_rule.json -p encoded
+$ create_rule_template -o subsampling_rule.json -d encoded
 ```
 
 Edit the template rule JSON file or use your own. Run the tool to get a CSV file with subsampled UUIDs.
 ```bash
-$ get_subsampled_uuids subsampling_rule.json -o subsampled.csv -p encoded
+$ get_subsampled_uuids subsampling_rule.json -o subsampled.csv -d encoded
 ```
 
 Make a backup of the database.
@@ -42,7 +37,22 @@ $ psql
 
 Take the CSV file and feed it to the subsampler, this will directly modify the current PG database.
 ```bash
-$ subsample_pg subsampled.csv -p encoded
+$ subsample_pg subsampled.csv -d encoded
+```
+
+If you see the following deadlock errors. Make sure that there are other processes trying to connect to the DB (e.g. apache2, ES). Stop those services and try again.
+```bash
+Traceback (most recent call last):
+  File "bin/subsample_pg", line 13, in <module>
+    main()
+  File "/var/lib/postgresql/igvf-subsample-db/bin/../igvf_subsample_db/subsample_pg.py", line 65, in main
+    profiles.subsample_pg(args.uuids_csv)
+  File "/var/lib/postgresql/igvf-subsample-db/bin/../igvf_subsample_db/profiles.py", line 279, in subsample_pg
+    cur.execute(
+psycopg2.errors.DeadlockDetected: deadlock detected
+DETAIL:  Process 18405 waits for AccessExclusiveLock on relation 16418 of database 16401; blocked by process 20451.
+Process 20451 waits for AccessShareLock on relation 16392 of database 16401; blocked by process 18405.
+HINT:  See server log for query details.
 ```
 
 Login as `encoded`. Reindex ElasticSearch.
@@ -65,9 +75,10 @@ $ create-mapping production.ini --app-name app
 $ curl -X GET localhost:9201/_cat/indices
 ```
 
-Wait for 30m and login as `root` and then start the web server.
+Wait for 30m and login as `root` and then start web server and ES.
 ```bash
 $ service apache2 start
+$ service elasticsearch start
 ```
 
 Visit the demo site and login as an admin account. Run the reindexer via URL. Open URL `YOUR_DEMO_ENDPOINT/_indexer_state?reindex=all`.
