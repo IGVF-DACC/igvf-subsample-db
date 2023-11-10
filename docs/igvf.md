@@ -1,21 +1,27 @@
 ## Setting up environments (RDS instance and EC2 instance)
 
 1) Login on AWS Console and go to [RDS menu](https://us-west-2.console.aws.amazon.com/rds/home?region=us-west-2#databases:)
+
 	![rds_menu](images/rds_menu.png)
 
 2) Click on `DB Instances` and find a running RDS instance `igvfd-dev-deploydevelopme-XXXXXXX` (or any other instance of interest). This is a base PG DB to be subsampled and we are going to make a copy of it.
+
 	![rds_instance](images/rds_instance.png)
 
 3) Click on it and copy the VPC ID under `Connectivity & security` tab. This will be used later to create your a new EC2 instance to SSH to the RDS instance.
+
 	![take_vpc_id](images/take_vpc_id.png)
 
 4) Scroll up and click on `Actions` and then `Take snapshot`. Define a new snapshot name and click on `Take snapshot`.
+
 	![rds_take_snapshot](images/rds_take_snapshot.png)
 
 5) Go back to [RDS menu](https://us-west-2.console.aws.amazon.com/rds/home?region=us-west-2#databases:) and click on `Snapshots`.
 
 6) Select the created snapshot and click on `Actions` and then `Restore snapshot`. Define a new RDS instance name under `DB instance identifier`. You will be subsampling PG DB on this RDS instance. You cannot directly SSH to an RDS instance. So you need to make a new EC2 instance and remotely connect to the RDS instance.
+
 	![rds_restore_snapshot](images/rds_restore_snapshot.png)
+
 	![db_instance_identifier](images/db_instance_identifier.png)
 
 7) Go back to [RDS menu](https://us-west-2.console.aws.amazon.com/rds/home?region=us-west-2#databases:) and click on `DB Instances`.
@@ -23,6 +29,7 @@
 8) Select an RDS instance that you just created. Click on `Actions` and then `Set up EC2 connection` and then `Create EC2 instance`. Then you will be redirected to EC2 instance creation wizard.
 
 9) Name the EC2 instance and choose `Ubuntu` for OS. Choose `t2.medium` for `Instance type`. Click `Edit` on `Network settings` section and choose the same VPC ID that you copied in `Step-3)`. Click on `Launch instance`.
+
 	![create_ec2_instance_select_ubuntu](images/create_ec2_instance_select_ubuntu.png)
 
 10) Go back to [RDS menu](https://us-west-2.console.aws.amazon.com/rds/home?region=us-west-2#databases:) and click on `DB Instances`.
@@ -30,6 +37,7 @@
 11) Select a RDS instance that you just created. Click on `Actions` and then `Set up EC2 connection`. Choose an EC2 instance that you just created. click on `Continue`. Scroll to bottom and click on `Set up`.
 
 12) Go to [Secrets Manager](https://us-west-2.console.aws.amazon.com/secretsmanager/home?region=us-west-2#). Search for `postgres` and select `igvfddevContinuousDeploymen-XXXXXXXXXXX`. Scroll down and find `Secret value` section. Click on `Retrieve secret value`. Copy secret value of key `password`. This is the master password for PG DB.
+
 	![secrets](images/secrets.png)
 
 13) Go to [EC2 instance menu](https://us-west-2.console.aws.amazon.com/ec2/home?region=us-west-2#Instances:instanceState=running) and click on your EC2 instance. Click on `Connect` to SSH to it.
