@@ -36,7 +36,11 @@
 
 11) Select a RDS instance that you just created. Click on `Actions` and then `Set up EC2 connection`. Choose an EC2 instance that you just created. click on `Continue`. Scroll to bottom and click on `Set up`.
 
-12) Go to [Secrets Manager](https://us-west-2.console.aws.amazon.com/secretsmanager/home?region=us-west-2#). Search for `postgres` and select `igvfddevContinuousDeploymen-XXXXXXXXXXX`. Scroll down and find `Secret value` section. Click on `Retrieve secret value`. Copy secret value of key `password`. This is the master password for PG DB.
+12) Additionally, click on the RDS instance and copy the value of `Endpoint` under section `Connectivity & security`. This will be used later for `RDS_INSTANCE_HOSTNAME`.
+
+	![endpoint](images/endpoint.png)
+
+12) Go to [Secrets Manager](https://us-west-2.console.aws.amazon.com/secretsmanager/home?region=us-west-2#). Search for `postgres` and select `igvfddevContinuousDeploymen-XXXXXXXXXXX`. Scroll down and find `Secret value` section. Click on `Retrieve secret value`. Copy secret value of key `password`. This is the master password for PG DB and will be used later for `PASSWORD`.
 
 	![secrets](images/secrets.png)
 
@@ -67,7 +71,7 @@ $ cd igvf-subsample-db
 $ python3 setup.py install --user
 ```
 
-3) (Optional) Create a template rule JSON and edit it. You can also use example rules on `example/` folder.
+3) (Optional) Create a template rule JSON and edit it. You can also use example rules on `example/` folder. `PASSWORD` is the PG DB master password that you got from `Secrets Manager`.
 ```bash
 $ create_rule_template -o subsampling_rule.json -d igvfd -P PASSWORD --host RDS_INSTANCE_HOSTNAME
 ```
