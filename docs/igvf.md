@@ -13,22 +13,19 @@
 	![rds_take_snapshot](images/rds_take_snapshot.png)
 
 5) Go back to [RDS menu](https://us-west-2.console.aws.amazon.com/rds/home?region=us-west-2#databases:) and click on `Snapshots`.
-	![rds_menu](images/rds_menu.png)
 
 6) Select the created snapshot and click on `Actions` and then `Restore snapshot`. Define a new RDS instance name under `DB instance identifier`. You will be subsampling PG DB on this RDS instance. You cannot directly SSH to an RDS instance. So you need to make a new EC2 instance and remotely connect to the RDS instance.
 	![rds_restore_snapshot](images/rds_restore_snapshot.png)
 	![db_instance_identifier](images/db_instance_identifier.png)
 
 7) Go back to [RDS menu](https://us-west-2.console.aws.amazon.com/rds/home?region=us-west-2#databases:) and click on `DB Instances`.
-	![rds_menu](images/rds_menu.png)
 
-8) Select a RDS instance that you just created. Click on `Actions` and then `Set up EC2 connection` and then `Create EC2 instance`. Then you will be redirected to EC2 instance creation wizard.
-	![create_ec2_instance_select_ubuntu](images/create_ec2_instance_select_ubuntu.png)
+8) Select an RDS instance that you just created. Click on `Actions` and then `Set up EC2 connection` and then `Create EC2 instance`. Then you will be redirected to EC2 instance creation wizard.
 
 9) Name the EC2 instance and choose `Ubuntu` for OS. Choose `t2.medium` for `Instance type`. Click `Edit` on `Network settings` section and choose the same VPC ID that you copied in `Step-3)`. Click on `Launch instance`.
+	![create_ec2_instance_select_ubuntu](images/create_ec2_instance_select_ubuntu.png)
 
 10) Go back to [RDS menu](https://us-west-2.console.aws.amazon.com/rds/home?region=us-west-2#databases:) and click on `DB Instances`.
-	![rds_menu](images/rds_menu.png)
 
 11) Select a RDS instance that you just created. Click on `Actions` and then `Set up EC2 connection`. Choose an EC2 instance that you just created. click on `Continue`. Scroll to bottom and click on `Set up`.
 
