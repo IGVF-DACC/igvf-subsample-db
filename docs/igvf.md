@@ -91,13 +91,15 @@ $ subsample_pg subsampled.csv -d igvfd -P PASSWORD --host RDS_INSTANCE_HOSTNAME
 
 ## Creating a new demo machine for testing
 
-1) Create a new branch for `igvfd` and `igvf-ui`(optional).
+1) Create a new branch for `igvfd` and `igvf-ui`(optional) from `dev` branch.
 
 2) Edit [`cdk/infrastructure/config.py`](https://github.com/IGVF-DACC/igvfd/blob/dev/cdk/infrastructure/config.py#L63) of `igvfd`. Replace `snapshot_source_db_identifier` with `snapshot_arn` and paste your final snapshot ARN for the key `snapshot_arn`.
 
-3) See [backend documentation](https://github.com/IGVF-DACC/igvfd/tree/dev/cdk) for details about deployment. Deploy with the final snapshot.
+3) Push all commits to the remote git repo `igvfd`.
+
+4) See [backend documentation](https://github.com/IGVF-DACC/igvfd/tree/dev/cdk) for details about deployment. Deploy with the final DB snapshot.
 ```bash
 $ cdk deploy -c branch=YOUR-BRANCH-NAME --profile igvf-dev
 ```
 
-4) You may also want to deploy UI [frontend](https://github.com/IGVF-DACC/igvf-ui/tree/dev/cdk) for further testing. Use the same branch name and you don't need to edit anything.
+5) You may also want to deploy UI [frontend](https://github.com/IGVF-DACC/igvf-ui/tree/dev/cdk) for further testing. Use the same branch name and you don't need to edit anything.
