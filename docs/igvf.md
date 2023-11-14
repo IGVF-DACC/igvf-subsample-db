@@ -71,22 +71,27 @@ $ cd igvf-subsample-db
 $ python3 setup.py install --user
 ```
 
-3) (Optional) Create a template rule JSON and edit it. You can also use example rules on `example/` folder. `PASSWORD` is the PG DB master password that you got from `Secrets Manager`.
+3) Keep logged in as `postgres` for next steps.
+```bash
+$ sudo su postgres
+```
+
+4) (Optional) Create a template rule JSON and edit it. You can also use example rules on [`example/`](`../example/`) folder. `PASSWORD` is the PG DB master password that you got from `Secrets Manager`.
 ```bash
 $ create_rule_template -o subsampling_rule.json -d igvfd -P PASSWORD --host RDS_INSTANCE_HOSTNAME
 ```
 
-4) Create subsample UUIDs CSV file based on the rule JSON.
+5) Create subsample UUIDs CSV file based on the rule JSON.
 ```bash
 $ get_subsampled_uuids subsampling_rule.json -o subsampled.csv -d igvfd -P PASSWORD --host RDS_INSTANCE_HOSTNAME
 ```
 
-5) Use the CSV file to subsample PG DB.
+6) Use the CSV file to subsample PG DB.
 ```bash
 $ subsample_pg subsampled.csv -d igvfd -P PASSWORD --host RDS_INSTANCE_HOSTNAME
 ```
 
-6) Go back to [RDS menu](https://us-west-2.console.aws.amazon.com/rds/home?region=us-west-2#databases:) and select your RDS instance. Click on `Actions` and then `Take snapshot`. This is the final snapshot of subsampled PG DB. Take ARN of this final snapshot and add it to `config.py` in the next steps.
+7) Go back to [RDS menu](https://us-west-2.console.aws.amazon.com/rds/home?region=us-west-2#databases:) and select your RDS instance. Click on `Actions` and then `Take snapshot`. This is the final snapshot of subsampled PG DB. Take ARN of this final snapshot and add it to `config.py` in the next steps.
 
 
 ## Creating a new demo machine for testing
