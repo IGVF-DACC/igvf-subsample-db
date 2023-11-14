@@ -76,7 +76,7 @@ $ python3 setup.py install --user
 $ sudo su postgres
 ```
 
-4) (Optional) Create a template rule JSON and edit it. You can also use example rules on [`example`](`/../example`) folder. `PASSWORD` is the PG DB master password that you got from `Secrets Manager`.
+4) (Optional) Create a template rule JSON and edit it. You can also use example rules on `../example/` folder. `PASSWORD` is the PG DB master password that you got from `Secrets Manager`.
 ```bash
 $ create_rule_template -o subsampling_rule.json -d igvfd -P PASSWORD --host RDS_INSTANCE_HOSTNAME
 ```
