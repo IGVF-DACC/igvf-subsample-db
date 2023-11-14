@@ -18,7 +18,7 @@
 
 5) Go back to [RDS menu](https://us-west-2.console.aws.amazon.com/rds/home?region=us-west-2#databases:) and click on `Snapshots`.
 
-6) Select the created snapshot and click on `Actions` and then `Restore snapshot`. Define a new RDS instance name under `DB instance identifier`. You will be subsampling PG DB on this RDS instance. You cannot directly SSH to an RDS instance. So you need to make a new EC2 instance and remotely connect to the RDS instance.
+6) Select the created snapshot and click on `Actions` and then `Restore snapshot`. Define a new RDS instance name under `DB instance identifier`. You will be subsampling PG DB on this RDS instance. You cannot directly SSH to an RDS instance. So you need to make a new EC2 instance and SSH to the RDS instance. Key creation is optional. If you want to SSH remotely from your local computer (using `ssh -i key.pem`) then create a new key on AWS console and save private key file `.pem` on your local computer and use it to create an instance. Otherwise you can use any existing key and connect to the instance via AWS Cloud Shell (`Connect` button on EC2 instance's `Action` menu).
 
 	![rds_restore_snapshot](images/rds_restore_snapshot.png)
 
