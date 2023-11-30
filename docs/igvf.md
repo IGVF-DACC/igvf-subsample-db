@@ -98,7 +98,7 @@ $ subsample_pg subsampled.csv -d igvfd -P PASSWORD --host RDS_INSTANCE_HOSTNAME
 
 1) Create a new branch for `igvfd` and `igvf-ui`(optional) from `dev` branch.
 
-2) Edit [`cdk/infrastructure/config.py`](https://github.com/IGVF-DACC/igvfd/blob/dev/cdk/infrastructure/config.py#L63) of `igvfd`. Replace `snapshot_source_db_identifier` with `snapshot_arn` and paste your final snapshot ARN for the key `snapshot_arn`.
+2) Edit [`cdk/infrastructure/config.py`](https://github.com/IGVF-DACC/igvfd/blob/dev/cdk/infrastructure/config.py#L63) of `igvfd`. Replace `snapshot_source_db_identifier` with `snapshot_arn` and paste your final snapshot ARN under the key `snapshot_arn`. This will replace DB snapshot ARN of the `demo` environment. There are two more environments `production` and `dev`, but they are not relevant for this testing so do not edit their DB snapshot sources. Make sure that your branch name used in the item 4) is not `main` or `dev`. `main` and `dev` will use environment `production` and `dev`, respectively.
 
 3) Push all commits to the remote git repo `igvfd`.
 
