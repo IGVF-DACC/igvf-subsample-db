@@ -122,4 +122,4 @@ $ python3 commands/cdk_destroy_all_stacks.py -c branch=YOUR-BRANCH-NAME --profil
 2) Delete the following items:
   - RDS instance restored from a snapshot in item 6) of [the first section](#setting-up-environments).
   - EC2 instance created in item 9) of [the first section](#setting-up-environments).
-  - Final RDS snapshot of subsampled database created in item 7) of [the second section](#creating-a-new-demo-machine-for-testing).
+  - Final RDS snapshot of subsampled database created in item 7) of [the second section](#running-the-subsampler-on-EC2-instance).
