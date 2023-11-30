@@ -1,4 +1,6 @@
-## Setting up environments (RDS instance and EC2 instance)
+## Setting up environments
+
+This section describes how to create environments (1 RDS instance and 1 EC2 instance) for the subsampling script.
 
 1) Login on AWS Console and go to [RDS menu](https://us-west-2.console.aws.amazon.com/rds/home?region=us-west-2#databases:)
 
@@ -108,3 +110,16 @@ $ cdk deploy -c branch=YOUR-BRANCH-NAME --profile igvf-dev
 ```
 
 5) You may also want to deploy UI [frontend](https://github.com/IGVF-DACC/igvf-ui/tree/dev/cdk) for further testing. Use the same branch name and you don't need to edit anything.
+
+
+## Cleaning up after testing
+
+1) The demo stack will be cleaned up automatically in 72h. But you can still clean it up manually. See [backend documentation](https://github.com/IGVF-DACC/igvfd/tree/dev/cdk) for details
+```bash
+$ python3 commands/cdk_destroy_all_stacks.py -c branch=YOUR-BRANCH-NAME --profile igvf-dev
+```
+
+2) Delete the following items:
+  - RDS instance restored from a snapshot in item 6) of [the first section](#setting-up-environments).
+  - EC2 instance created in item 9) of [the first section](#setting-up-environments).
+  - Final RDS snapshot of subsampled database created in item 7) of [the second section](#creating-a-new-demo-machine-for-testing).
